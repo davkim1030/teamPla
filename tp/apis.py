@@ -3,11 +3,6 @@ from datetime import datetime
 import random
 
 
-def team_update(team: Team, **kwargs):
-    for var, value in kwargs:
-        team.var = value
-
-
 def team_exit(team: Team):
     if "0" not in team.exitVote:
         target_list = Team.objects.filter(id=team.id)
