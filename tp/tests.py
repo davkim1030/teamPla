@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .models import *
 from django.db import models
+from .apis import *
 from django.utils.translation import gettext_lazy as _
 
 def register_proj(clients, proj: Project):
@@ -10,7 +11,7 @@ def register_proj(clients, proj: Project):
 
 def print_userinfo():
     client_list = Client.objects.all()
-    print("id           project         team")
+    print("id           project         team            status")
     for client in client_list:
         proj = Client.objects.filter(intraId=client.intraId)[0].project
         team = Client.objects.filter(intraId=client.intraId)[0].team
@@ -18,10 +19,22 @@ def print_userinfo():
             proj = proj.name
         if team is not None:
             team = team.id
-        print(client.intraId + '         ' + str(proj) + '        ' + str(team))
+        print(client.intraId + '         ' + str(proj) + '        ' + str(team)+'       '+str(client.status))
     print(len(client_list))
 
 
+def ff():
+    for i in range(10):
+        Client.objects.create(intraId=str(i), status=Client.Status.NONE)
+    register_proj(Client.objects.all()[:2], Project.objects.filter(name="gnl")[0])
+    register_proj(Client.objects.all()[2:6], Project.objects.filter(name="libft")[0])
+    register_proj(Client.objects.all()[6:], Project.objects.filter(name="ft_printf")[0])
+    team_match()
+    Team.objects.all().update(exitVoteList="1111")
+    print_userinfo()
 
+    for i in Team.objects.all():
+        team_exit(i)
+    print_userinfo()
 
 # Create your tests here.
