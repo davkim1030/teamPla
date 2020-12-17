@@ -2,10 +2,11 @@ from enum import Enum
 from django.db import models
 
 
-class Auth(Enum):
-    USER = 1
-    ADMIN = 2
-
+class status(Enum):
+    none = 1
+    ready = 2
+    matched = 3
+    fail = 4
 
 class Project(models.Model):
     """
@@ -42,5 +43,5 @@ class User(models.Model):
     """
     intraId = models.CharField(max_length=10, primary_key=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    auth = models.CharField(max_length=1, choices=Auth)
+    status = models.CharField(max_length=1, choices=status)
     project = models.CharField(max_length=25)
