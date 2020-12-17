@@ -115,3 +115,8 @@ def team_info(request):
         }
         return render(request, 'team_info.html', param)
 
+
+def logout(request):
+    response = redirect('main')
+    sign_out(response)
+    return response

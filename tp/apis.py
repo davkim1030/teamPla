@@ -250,5 +250,5 @@ def voteExit(intraId: str):
 """
 
 
-def logout():
-    pass
+def sign_out(response):
+    response.delete_cookie('user_key')
