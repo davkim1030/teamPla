@@ -7,7 +7,7 @@ from Crypto.Cipher import AES
 from django.conf import settings
 
 from .models import *
-from datetime import date
+import datetime
 
 import random
 
@@ -36,14 +36,14 @@ def team_match():
             for i in range(3):
                 member_list.append(team_list.pop())
             Team.objects.create(userList=','.join(member_list), exitVoteList="000",
-                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
+                                project=prj, dueDate=datetime.date.today().strftime("%Y%m%d"))
             user_nb -= 3
         if len(team_list) == 4:
             Team.objects.create(userList=','.join(team_list), exitVoteList="0000",
-                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
+                                project=prj, dueDate=datetime.date.today().strftime("%Y%m%d"))
         if len(team_list) == 2:
             Team.objects.create(userList=','.join(team_list), exitVoteList="00",
-                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
+                                project=prj, dueDate=datetime.date.today().strftime("%Y%m%d"))
         del team_list
 
 
@@ -67,10 +67,10 @@ def code2token(code):
 
 def token2user(token):
     url = "https://api.intra.42.fr/v2/me"
-    params = {
+    headers = {
         "Authorization": "Bearer " + token
     }
-    r = requests.get(url=url, params=params)
+    r = requests.get(url=url, headers=headers)
     data = r.json()
     if "login" in data:
         return data["login"]
@@ -178,14 +178,15 @@ def login():
 
 
 def is_team_matched(intraId: str):
-    user: User = User.objects.get(intraId=intraId)
+    user: Client = Client.objects.get(intraId=intraId)
     if user.team is not None:
         return True
     else:
         return False
 
+
 def is_project_applied(intraId: str):
-    user: User = User.objects.get(intraId=intraId)
+    user: Client = Client.objects.get(intraId=intraId)
     if user.project is not None:
         return True
     else:
