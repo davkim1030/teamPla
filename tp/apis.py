@@ -4,20 +4,18 @@ import random
 
 
 def team_exit(team: Team):
-    if "0" not in team.exitVote:
+    if "0" not in team.exitVoteList:
         target_list = Team.objects.filter(id=team.id)
-    user_list = target_list[0].userList.split(seq=',')
-    for user_id in user_list:
-        users = User.objects.filter(intraId=user_id)
-        for user in users:
-            user.objects.update(Project=None)
-    Team.objects.delete(id = target_list[0].id)
+        user_list = target_list[0].userList.split(',')
+        for user_id in user_list:
+            Client.objects.filter(intraId=user_id).update(project=None)
+        target_list.delete()
 
 
 def team_match():
     for prj in Project.objects.all():
         team_list = list()
-        for usr in User.objects.all():
+        for usr in Client.objects.all():
             if prj.name == usr.project.name:
                 team_list.append(usr.intraId)
         random.shuffle(team_list)
