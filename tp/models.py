@@ -43,4 +43,4 @@ class User(models.Model):
     intraId = models.CharField(max_length=10, primary_key=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     auth = models.CharField(max_length=1, choices=Auth)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.CharField(max_length=25)

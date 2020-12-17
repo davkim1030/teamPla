@@ -43,31 +43,39 @@ def team_match(self):
 42api 사용법을 알아야한다.
 """
 def login():
+
 	pass
 
 """
 팀이 등록되었는지 확인
 """
 def isteamMatched():
+
 	pass
 """
 팀 매칭 신청 (프로젝트 등록)
 """
 def reister(project):
+    #프로젝트의 기기간 정보 들고오기
+
 	pass
 
 """
 과제종료
-team의 exitVote에 1추가
+team의 exitVote에 1추가ㅁㅁㄴㅁㄴ
 """
-def voteExit():
-	pass
+def voteExit(intraId):
+    team = Team.objects.get(intraId = intraId)
+    userList_str = team.userList
+    voteExit()
+    userList_list = userList_str.split()
+    intraId_list.index(intraId)
+
+    pass
+
 """
 로그아웃
 """
 def logout():
 	pass
 
-
-def readById(user):
-	Team.
