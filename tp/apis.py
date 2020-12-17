@@ -204,11 +204,14 @@ def is_project_applied(intraId: str):
 """
 
 
-def reister(project_name: str):
-    # 프로젝트의 기간 정보 들고오기
-    project: Project = Project.objects.get(project_name)
-
-    pass
+def reister(intraId: str, project: Project):
+    # 클라이언트 객체에 프로젝트 등록
+    if intraId is None or project is None:
+        user: Client = Client.object.get(intraId=intraId)
+        user.project = project
+        return True
+    else:
+        return False
 
 
 """
