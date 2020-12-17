@@ -218,7 +218,7 @@ def is_project_applied(intraId: str):
 
 def register(intraId: str, project: Project):
     # 클라이언트 객체에 프로젝트 등록
-    if intraId is None or project is None:
+    if intraId is not None and project is not None:
         user: Client = Client.objects.get(intraId=intraId)
         user.project = project
         Client.objects.filter(intraId=intraId).update(project=project,
@@ -234,17 +234,15 @@ def register(intraId: str, project: Project):
 
 
 def voteExit(intraId: str):
-    team: Team = Team.objects.get(intraId=intraId)
+    team: Team = Team.objects.get(id=Client.objects.filter(intraId=intraId)[0].team.id)
     user_list_str: str = team.userList
-    user_list_list = user_list_str.split()
-    exit_vote_str = team.exitVote
+    user_list_list = user_list_str.split(",")
     index: int = user_list_list.index(intraId)
-    if exit_vote_str[index] == '0':
-        exit_vote_str = exit_vote_str[0:index] + '1' + exit_vote_str[index:]
-        if exit_vote_str == "111":
+    if team.exitVoteList[index] == '0':
+        team.exitVoteList = team.exitVoteList[:index] + "1" + team.exitVoteList[index + 1:]
+        team.save()
+        if team.exitVoteList == "1" * len(team.exitVoteList):
             team_exit(team)
-    else:
-        print("hello")
 
 
 """
