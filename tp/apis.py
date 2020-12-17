@@ -7,7 +7,7 @@ from Crypto.Cipher import AES
 from django.conf import settings
 
 from .models import *
-from datetime import date
+import datetime
 
 import random
 
@@ -40,7 +40,7 @@ def team_match():
             for member in member_list:
                 Client.objects.filter(intraId=member).update(team=new_team)
             user_nb -= 3
-        
+
         if len(applied_clients) == 4:
             new_team = Team.objects.create(userList=','.join(applied_clients), exitVoteList="0000",
                                            project=prj, dueDate=date.today().strftime("%Y-%m-%d"))
@@ -74,10 +74,10 @@ def code2token(code):
 
 def token2user(token):
     url = "https://api.intra.42.fr/v2/me"
-    params = {
+    headers = {
         "Authorization": "Bearer " + token
     }
-    r = requests.get(url=url, params=params)
+    r = requests.get(url=url, headers=headers)
     data = r.json()
     if "login" in data:
         return data["login"]
@@ -173,26 +173,67 @@ def sign_in(intra_id):
 42api 권환 획득
 42api 사용법을 알아야한다.
 """
-def login():
 
-	pass
+
+def login():
+    pass
+
 
 """
 팀이 등록되었는지 확인
 """
-def isteamMatched():
 
-	pass
+
+def is_team_matched(intraId: str):
+    user: Client = Client.objects.get(intraId=intraId)
+    if user.team is not None:
+        return True
+    else:
+        return False
+
+
+def is_project_applied(intraId: str):
+    user: Client = Client.objects.get(intraId=intraId)
+    if user.project is not None:
+        return True
+    else:
+        return False
+
 """
 팀 매칭 신청 (프로젝트 등록)
 """
-def reister(project):
-    #프로젝트의 기기간 정보 들고오기
-	pass
+
+
+def reister(project_name: str):
+    # 프로젝트의 기간 정보 들고오기
+    project: Project = Project.objects.get(project_name)
+
+    pass
+
+
+"""
+과제종료 신청
+"""
+
+
+def voteExit(intraId: str):
+    team: Team = Team.objects.get(intraId=intraId)
+    user_list_str: str = team.userList
+    user_list_list = user_list_str.split()
+    exit_vote_str = team.exitVote
+    index: int = user_list_list.index(intraId)
+    if exit_vote_str[index] == '0':
+        exit_vote_str = exit_vote_str[0:index] + '1' + exit_vote_str[index:]
+        if exit_vote_str == "111":
+            team_exit(team)
+    else:
+        print("hello")
 
 
 """
 로그아웃
 """
+
+
 def logout():
-	pass
+    pass
