@@ -1,12 +1,6 @@
-from enum import Enum
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-
-class status(Enum):
-    none = 1
-    ready = 2
-    matched = 3
-    fail = 4
 
 class Project(models.Model):
     """
@@ -35,13 +29,18 @@ class Team(models.Model):
 
 class User(models.Model):
     """
-    42Cursus 프로젝트에 관한 클래스
+    서비스 사용자에 관한 클래스
     :intraId 유저의 로그인 Id
     :team 테이블의 외래키
-    :auth 유저의 권한
+    :status 유저의 팀 매칭 상태
     :project 푸로제트 관련 정보
     """
+    class Status(models.TextChoices):
+        NONE = "NONE", _("None")
+        WAITING = "WAITING", _("Waiting")
+        MATCHED = "MATCHED", _("Matched")
+        FAIL = "FAIL", _("Fail")
     intraId = models.CharField(max_length=10, primary_key=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    status = models.CharField(max_length=1, choices=status)
-    project = models.CharField(max_length=25)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
+    status = models.CharField(max_length=7, choices=Status.choices)
+    project = models.CharField(max_length=25, null=True)
