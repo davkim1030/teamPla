@@ -8,24 +8,24 @@ def main(request):
 
 
 def login(request):
-    code = request.GET["code"]
-    if code is not None:
-        token = code2token(code)
-        if "error" in token:
-            print("token:" + token)
-            return HttpResponse(status=500)
-        intra_id = token2user(token)
-        if "error" in intra_id:
-            print("intra_id: " + intra_id)
-            return HttpResponse(status=500)
-        user = Client.objects.filter(intraId=intra_id)
-        if len(user) == 0:
-            sign_in(intra_id)
-        response = redirect('main')
-        aes = AESCipher()
-        set_cookie(response, "user_key", aes.encrypt_str(intra_id))
-        return response
-    return HttpResponseNotFound()
+    if "code" in request.GET:
+        code = request.GET["code"]
+        if code is not None:
+            token = code2token(code)
+            if "error" in token:
+                return HttpResponse(status=500)
+            intra_id = token2user(token)
+            if "error" in intra_id:
+                return HttpResponse(status=500)
+            user = Client.objects.filter(intraId=intra_id)
+            if len(user) == 0:
+                sign_in(intra_id)
+            response = redirect('main')
+            aes = AESCipher()
+            set_cookie(response, "user_key", aes.encrypt_str(intra_id))
+            return response
+        return HttpResponseNotFound()
+    return redirect('main')
 
 
 def register_team(request):
