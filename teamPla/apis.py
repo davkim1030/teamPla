@@ -23,19 +23,19 @@ def team_match(self):
             member_list = list()
             for i in range(3):
                 member_list.append(team_list.pop())
-            Team.objects.create(userList = ','.join(member_list), exitVote = "0000")
+            Team.objects.create(userList = ','.join(member_list), exitVote = "0000", project = prj, dueDate = datetime.date.today().strftime("%Y%m%d"))
             user_nb -= 3
         if len(team_list):
-            Team.objects.create(userList = ','.join(team_list), exitVote = "0000", )
+            Team.objects.create(userList = ','.join(team_list), exitVote = "0000", project = prj, dueDate = datetime.date.today().strftime("%Y%m%d"))
         del team_list
 
 
 
 
-    User.object.filter(Project = 프로젝트명)
+    User.objects.filter(Project = 프로젝트명)
     팀생성 방법
-    :Team.object.create(id = , userList= ,exitVote,project,dueDate,startDate)
-    User.object.update(Project=None)
+    :Team.objects.create(id = , userList= ,exitVote,project,dueDate,startDate)
+    User.objects.update(Project=None)
 
 
 """
