@@ -42,5 +42,5 @@ class Client(models.Model):
         FAIL = "FAIL", _("Fail")
     intraId = models.CharField(max_length=10, primary_key=True)
     team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.CASCADE)
-    auth = models.CharField(max_length=5, choices=Status.choices)
+    status = models.CharField(max_length=7, choices=Status.choices)
     project = models.ForeignKey(Project, null=True, blank=True, on_delete=models.CASCADE)
