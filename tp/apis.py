@@ -1,5 +1,4 @@
 import base64
-import datetime
 import hashlib
 
 import requests
@@ -13,41 +12,39 @@ from datetime import date
 import random
 
 
-def team_update(team: Team, **kwargs):
-    for var, value in kwargs:
-        team.var = value
-
-
 def team_exit(team: Team):
-    if "0" not in team.exitVote:
+    if "0" not in team.exitVoteList:
         target_list = Team.objects.filter(id=team.id)
-    user_list = target_list[0].userList.split(seq=',')
-    for user_id in user_list:
-        users = User.objects.filter(intraId=user_id)
-        for user in users:
-            user.objects.update(Project=None)
-    Team.objects.delete(id=target_list[0].id)
+        user_list = target_list[0].userList.split(',')
+        for user_id in user_list:
+            Client.objects.filter(intraId=user_id).update(project=None)
+        target_list.delete()
 
 
 def team_match():
     for prj in Project.objects.all():
         team_list = list()
-        for usr in User.objects.all():
+        for usr in Client.objects.all():
             if prj.name == usr.project.name:
                 team_list.append(usr.intraId)
         random.shuffle(team_list)
         user_nb = len(team_list)
-        while user_nb != 4 and user_nb > 0:
+        #if user_nb == 1:
+        #    team
+        while user_nb != 4 and user_nb > 3:
             member_list = list()
             for i in range(3):
                 member_list.append(team_list.pop())
-            Team.objects.create(userList=','.join(member_list), exitVote="0000", project=prj, dueDate=date.today().
-                                strftime("%Y%m%d"))
+            Team.objects.create(userList=','.join(member_list), exitVoteList="000",
+                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
             user_nb -= 3
-        if len(team_list):
-            Team.objects.create(userList=','.join(team_list), exitVote="0000", project=prj, dueDate=date.today().strftime("%Y%m%d"))
+        if len(team_list) == 4:
+            Team.objects.create(userList=','.join(team_list), exitVoteList="0000",
+                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
+        if len(team_list) == 2:
+            Team.objects.create(userList=','.join(team_list), exitVoteList="00",
+                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
         del team_list
-
 
 
 def code2token(code):
@@ -162,7 +159,7 @@ def add_user_key_cookie(response, intra_id):
 
 
 def sign_in(intra_id):
-    User.objects.create(intraId=intra_id, status=User.Status.NONE)
+    Client.objects.create(intraId=intra_id, status=Client.Status.NONE)
 
 
 """

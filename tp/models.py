@@ -22,12 +22,12 @@ class Team(models.Model):
     """
     id = models.AutoField(primary_key=True)
     userList = models.CharField(max_length=50, null=False)
-    exitVote = models.CharField(max_length=4, null=False)
+    exitVoteList = models.CharField(max_length=4, null=False)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     dueDate = models.DateField(null=False)
 
 
-class User(models.Model):
+class Client(models.Model):
     """
     서비스 사용자에 관한 클래스
     :intraId 유저의 로그인 Id
@@ -41,6 +41,6 @@ class User(models.Model):
         MATCHED = "MATCHED", _("Matched")
         FAIL = "FAIL", _("Fail")
     intraId = models.CharField(max_length=10, primary_key=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
-    status = models.CharField(max_length=7, choices=Status.choices)
-    project = models.CharField(max_length=25, null=True)
+    team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.CASCADE)
+    auth = models.CharField(max_length=5, choices=Status.choices)
+    project = models.ForeignKey(Project, null=True, blank=True, on_delete=models.CASCADE)

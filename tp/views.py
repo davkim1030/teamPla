@@ -18,7 +18,7 @@ def login(request):
         if "error" in intra_id:
             print("intra_id: " + intra_id)
             return HttpResponse(status=500)
-        user = User.objects.filter(intraId=intra_id)
+        user = Client.objects.filter(intraId=intra_id)
         if len(user) == 0:
             sign_in(intra_id)
         response = redirect('main')
