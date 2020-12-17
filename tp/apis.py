@@ -23,28 +23,35 @@ def team_exit(team: Team):
 
 def team_match():
     for prj in Project.objects.all():
-        team_list = list()
+        applied_clients = list()
         for usr in Client.objects.all():
             if prj.name == usr.project.name:
-                team_list.append(usr.intraId)
-        random.shuffle(team_list)
-        user_nb = len(team_list)
+                applied_clients.append(usr.intraId)
+        random.shuffle(applied_clients)
+        user_nb = len(applied_clients)
         #if user_nb == 1:
         #    team
         while user_nb != 4 and user_nb > 3:
             member_list = list()
             for i in range(3):
-                member_list.append(team_list.pop())
-            Team.objects.create(userList=','.join(member_list), exitVoteList="000",
-                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
+                member_list.append(applied_clients.pop())
+            new_team = Team.objects.create(userList=','.join(member_list), exitVoteList="000",
+                                           project=prj, dueDate=date.today().strftime("%Y-%m-%d"))
+            for member in member_list:
+                Client.objects.filter(intraId=member).update(team=new_team)
             user_nb -= 3
-        if len(team_list) == 4:
-            Team.objects.create(userList=','.join(team_list), exitVoteList="0000",
-                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
-        if len(team_list) == 2:
-            Team.objects.create(userList=','.join(team_list), exitVoteList="00",
-                                project=prj, dueDate=date.today().strftime("%Y%m%d"))
-        del team_list
+        
+        if len(applied_clients) == 4:
+            new_team = Team.objects.create(userList=','.join(applied_clients), exitVoteList="0000",
+                                           project=prj, dueDate=date.today().strftime("%Y-%m-%d"))
+
+        elif len(applied_clients) == 2:
+            new_team = Team.objects.create(userList=','.join(applied_clients), exitVoteList="00",
+                                           project=prj, dueDate=date.today().strftime("%Y-%m-%d"))
+        for member in applied_clients:
+            Client.objects.filter(intraId=member).update(team=new_team)
+
+        del applied_clients
 
 
 def code2token(code):
