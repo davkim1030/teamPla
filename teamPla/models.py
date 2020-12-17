@@ -15,7 +15,6 @@ class Project(models.Model):
     name = models.CharField(max_length=25, primary_key=True)
     recommend_day = models.IntegerField(null=False)
 
-<<<<<<< HEAD
 
 class Team(models.Model):
     """
@@ -32,10 +31,6 @@ class Team(models.Model):
     dueDate = models.DateField(null=False)
 
 
-=======
-class Team(models.Model):
-	pass
-
 
 class User(models.Model):
 	"""
@@ -49,4 +44,3 @@ class User(models.Model):
 	team = models.ForeignKey(Team, on_delete=models.CASCADE)
 	auth = models.CharField(max_length=1, choices = Auth)
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
->>>>>>> c42402d0b7967e4fffd170aacee7ca1d5aa19d36
