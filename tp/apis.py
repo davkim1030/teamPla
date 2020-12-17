@@ -10,9 +10,15 @@ def team_update(team: Team, **kwargs):
 
 def team_exit(team: Team):
     if 0 not in team.exitVote:
-        Team.objects.filter.team.id()
+        target_list = Team.objects.filter(id = team.id)
+    user_list = target_list[0].userList.split(seq = ',')
+    for user_id in user_list:
+        users = User.objects.filter(intraId = user_id)
+        for user in users:
+            user.objects.update(Project=None)
+    Team.objects.delete(id = target_list[0].id)
 
-def team_match(self):
+def team_match():
     for prj in Project.objects.all():
         team_list = list()
         for usr in User.objects.all():
