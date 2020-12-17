@@ -9,7 +9,7 @@ def team_update(team: Team, **kwargs):
 
 def team_exit(team: Team):
     if 0 not in team.exitVote:
-        Team.object.filter.team.id()
+        Team.objects.filter.team.id()
 
 def team_match(self):
     for prj in Project.objects.all():
