@@ -1,2 +1,41 @@
-from teamPla.models import Project
+from models import *
+import random
+
+def team_update(team: Team, **kwargs):
+    for var, value in kwargs:
+        team.var = value
+
+
+def team_exit(team: Team):
+    if 0 not in team.exitVote:
+        Team.object.filter.team.id()
+
+def team_match(self):
+    for prj in Project.objects.all():
+        team_list = list()
+        for usr in User.objects.all():
+            if prj.name == usr.project.name:
+                team_list.append(usr.intraId)
+        random.shuffle(team_list)
+        user_nb = len(team_list)
+        while user_nb != 4 and user_nb > 0:
+            member_list = list()
+            for i in range(3):
+                member_list.append(team_list.pop())
+            Team.objects.create(userList = ','.join(member_list), exitVote = "0000")
+            user_nb -= 3
+        if len(team_list):
+            Team.objects.create(userList = ','.join(team_list), exitVote = "0000", )
+        del team_list
+
+
+
+
+    User.object.filter(Project = 프로젝트명)
+    팀생성 방법
+    :Team.object.create(id = , userList= ,exitVote,project,dueDate,startDate)
+    User.object.update(Project=None)
+
+
+
 

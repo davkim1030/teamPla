@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 
 class Project(models.Model):
@@ -9,3 +10,20 @@ class Project(models.Model):
     """
     name = models.CharField(max_length=25, primary_key=True)
     recommend_day = models.IntegerField(null=False)
+
+
+class Team(models.Model):
+    """
+    42 매칭되는 팀에 관한 class
+    id : Team의 key value
+    project : team이 진행중인 project
+    duedate : team의 project 완료일자
+    startDate : team이 project를 시작한 날짜
+    """
+    id = models.AutoField(primary_key=True)
+    userList = models.CharField(max_length=50, null=False)
+    exitVote = models.CharField(max_length=4, null=False)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    dueDate = models.DateField(null=False)
+
+
