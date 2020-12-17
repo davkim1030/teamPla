@@ -8,5 +8,16 @@
 <h1>
     TEAM INFO
 </h1>
+<h2>{{ project }}</h2>
+<ul>
+    {% for user in team_list %}
+        <li><a href="https://profile.intra.42.fr/users/{{ user }}">{{ user }}</a></li>
+    {% endfor %}
+    <li>Due Date: {{ due_date }}</li>
+</ul>
+<form method="POST" action="">
+    {% csrf_token %}
+    <input type="submit" value="Exit Team">
+</form>
 </body>
 </html>

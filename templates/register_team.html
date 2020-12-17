@@ -8,5 +8,15 @@
 <h1>
     REGISTER TEAM
 </h1>
+<form method="POST" action="">
+    {% csrf_token %}
+    <label for="project"></label>
+    <select id="project" name="project">
+        {% for prj in prjs %}
+            <option value="{{ prj.name }}">{{ prj.name }}</option>
+        {% endfor %}
+    </select>
+    <input value="Register" type="submit">
+</form>
 </body>
 </html>

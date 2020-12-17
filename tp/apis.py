@@ -169,6 +169,18 @@ def sign_in(intra_id):
     Client.objects.create(intraId=intra_id, status=Client.Status.NONE)
 
 
+def get_client(request):
+    if "user_key" not in request.COOKIES:
+        return None
+    user_key = request.COOKIES["user_key"]
+    aes = AESCipher()
+    intra_id = aes.decrypt_str(user_key)
+    client = Client.objects.filter(intraId=intra_id)
+    if len(client) == 0:
+        return None
+    return client
+
+
 """
 42api 권환 획득
 42api 사용법을 알아야한다.
@@ -204,11 +216,13 @@ def is_project_applied(intraId: str):
 """
 
 
-def reister(intraId: str, project: Project):
+def register(intraId: str, project: Project):
     # 클라이언트 객체에 프로젝트 등록
     if intraId is None or project is None:
-        user: Client = Client.object.get(intraId=intraId)
+        user: Client = Client.objects.get(intraId=intraId)
         user.project = project
+        Client.objects.filter(intraId=intraId).update(project=project,
+                                                      status=Client.Status.WAITING)
         return True
     else:
         return False

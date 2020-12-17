@@ -1,10 +1,31 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
+from django.template.defaulttags import csrf_token
+from django.views.decorators.csrf import csrf_protect
+
 from .apis import *
 
 
 def main(request):
-    return render(request, 'main.html')
+    client = get_client(request)
+    param = {}
+    if client is None:
+        param['title'] = '로그인'
+        param['link'] = "https://api.intra.42.fr/oauth/authorize?client_id" \
+                        "=7dbf58940924b902ede1d036e96055852f2556f83841fa9883b10a6dcb3a9bdc&redirect_uri=http%3A%2F" \
+                        "%2Flocalhost%3A8000%2Flogin%2F&response_type=code"
+    else:
+        if client[0].team is not None:
+            param['title'] = "팀정보"
+            param['link'] = "/team_info/"
+        else:
+            if client[0].project is None:
+                param['title'] = "플젝 신청"
+                param['link'] = '/register_team/'
+            else:
+                param['title'] = "신청 수정"
+                param['link'] = "/pending_team/"
+    return render(request, 'main.html', param)
 
 
 def login(request):
@@ -28,15 +49,69 @@ def login(request):
     return redirect('main')
 
 
+@csrf_protect
 def register_team(request):
-    request.META['Bearer'] = "298a9ead836455ebcfd8dcc75c7872117532d055fbfb460580052d67c6f06dea"
-    return redirect("https://api.intra.42.fr/v2/users/hyukim")
+    client = get_client(request)
+    if client is None:
+        return HttpResponse(status=403)
+    if len(client) == 0:
+        return HttpResponse(status=403)
+    if client[0].status == Client.Status.WAITING:
+        return redirect('pending_team')
+    if client[0].status == Client.Status.MATCHED:
+        return redirect('team_info')
+    if request.method == "POST":
+        project = request.POST["project"]
+        project = Project.objects.filter(name=project)
+        if len(project) == 0:
+            return HttpResponse(status=400)
+        project = project[0]
+        register(client[0].intraId, project)
+        return redirect('main')
+    else:
+        param = {'prjs': list(Project.objects.all())}
+        return render(request, 'register_team.html', param)
 
 
+@csrf_protect
 def pending_team(request):
-    return render(request, 'pending_team.html')
+    client = get_client(request)
+    if client is None:
+        return HttpResponse(status=403)
+    if client[0].status == Client.Status.NONE:
+        return redirect('register_team')
+    if client[0].status == Client.Status.MATCHED:
+        return redirect('team_info')
+    if request.method == "POST":
+        project = request.POST["project"]
+        project = Project.objects.filter(name=project)
+        if len(project) == 0:
+            return HttpResponse(status=400)
+        project = project[0]
+        register(client[0].intraId, project)
+        return redirect('main')
+    else:
+        sel = client[0].project
+        param = {'prjs': list(Project.objects.all()), "sel": sel.name}
+        return render(request, 'pending_team.html', param)
 
 
+@csrf_protect
 def team_info(request):
-    return render(request, 'team_info.html')
+    client = get_client(request)
+    if client is None:
+        return HttpResponse(status=403)
+    if client[0].status != Client.Status.MATCHED:
+        return HttpResponse(status=403)
+    if request.method == "POST":
+        voteExit(client[0].intraId)
+        return redirect('team_info')
+    else:
+        team = Team.objects.filter(id=client[0].team.id)[0]
+        param = {
+            'project': team.project.name,
+            'team_list': team.userList.split(","),
+            'due_date': team.dueDate
+        }
+        return render(request, 'team_info.html', param)
 

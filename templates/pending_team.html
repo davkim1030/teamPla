@@ -8,5 +8,19 @@
 <h1>
     PENDING TEAM
 </h1>
+<form method="POST" action="">
+    {% csrf_token %}
+    <label for="project"></label>
+    <select id="project" name="project" >
+        {% for prj in prjs %}
+            {% if sel == prj.name %}
+                <option selected="selected" value="{{ prj.name }}">{{ prj.name }}</option>
+            {% else %}
+                <option value="{{ prj.name }}">{{ prj.name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <input value="Update" type="submit">
+</form>
 </body>
 </html>
