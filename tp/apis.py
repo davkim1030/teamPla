@@ -38,13 +38,6 @@ def team_match():
 
 
 
-
-    User.objects.filter(Project = 프로젝트명)
-    팀생성 방법
-    :Team.objects.create(id = , userList= ,exitVote,project,dueDate,startDate)
-    User.objects.update(Project=None)
-
-
 """
 42api 권환 획득
 42api 사용법을 알아야한다.
