@@ -1,6 +1,5 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
-from django.template.defaulttags import csrf_token
 from django.views.decorators.csrf import csrf_protect
 
 from .apis import *
@@ -10,11 +9,13 @@ def main(request):
     client = get_client(request)
     param = {}
     if client is None:
+        param['user'] = None
         param['title'] = '로그인'
         param['link'] = "https://api.intra.42.fr/oauth/authorize?client_id" \
                         "=7dbf58940924b902ede1d036e96055852f2556f83841fa9883b10a6dcb3a9bdc&redirect_uri=http%3A%2F" \
                         "%2Flocalhost%3A8000%2Flogin%2F&response_type=code"
     else:
+        param['user'] = client[0].intraId
         if client[0].team is not None:
             param['title'] = "팀정보"
             param['link'] = "/team_info/"
