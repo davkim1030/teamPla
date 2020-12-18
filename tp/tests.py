@@ -24,11 +24,11 @@ def print_userinfo():
 
 
 def ff():
-    for i in range(10):
+    for i in range(12):
         Client.objects.create(intraId=str(i), status=Client.Status.NONE)
-    register_proj(Client.objects.all()[:2], Project.objects.filter(name="gnl")[0])
-    register_proj(Client.objects.all()[2:6], Project.objects.filter(name="libft")[0])
-    register_proj(Client.objects.all()[6:], Project.objects.filter(name="ft_printf")[0])
+    register_proj(Client.objects.all()[:4], Project.objects.filter(name="gnl")[0])
+    register_proj(Client.objects.all()[4:8], Project.objects.filter(name="libft")[0])
+    register_proj(Client.objects.all()[8:], Project.objects.filter(name="ft_printf")[0])
     team_match()
     Team.objects.all().update(exitVoteList="1111")
     print_userinfo()

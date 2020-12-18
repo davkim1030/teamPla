@@ -31,28 +31,24 @@ def team_match():
         random.shuffle(applied_clients)
         user_nb = len(applied_clients)
         if user_nb == 1:
-            Client.objects.filter(intraId=member).update(status=Client.Status.FAIL)
-        while user_nb != 4 and user_nb > 3:
+            Client.objects.filter(intraId=applied_clients[0]).update(status=Client.Status.FAIL)
+        while user_nb > 4:
             member_list = list()
             for i in range(3):
                 member_list.append(applied_clients.pop())
             new_team = Team.objects.create(userList=','.join(member_list), exitVoteList="000",
-                                           project=prj, dueDate=datetime.date.today().strftime("%Y-%m-%d"))
+                                           project=prj,
+                                           dueDate=((datetime.date.today() +
+                                                     datetime.timedelta(days=prj.recommend_day * 2))
+                                                    .strftime("%Y-%m-%d")))
             for member in member_list:
                 Client.objects.filter(intraId=member).update(team=new_team, status=Client.Status.MATCHED)
             user_nb -= 3
-
-        if len(applied_clients) == 4:
-            new_team = Team.objects.create(userList=','.join(applied_clients), exitVoteList="0000",
-                                           project=prj, dueDate=datetime.date.today().strftime("%Y-%m-%d"))
-
-        elif len(applied_clients) == 2:
-            new_team = Team.objects.create(userList=','.join(applied_clients), exitVoteList="00",
+        if user_nb > 0:
+            new_team = Team.objects.create(userList=','.join(applied_clients), exitVoteList="0" * user_nb,
                                            project=prj, dueDate=datetime.date.today().strftime("%Y-%m-%d"))
         for member in applied_clients:
             Client.objects.filter(intraId=member).update(team=new_team, status=Client.Status.MATCHED)
-
-        del applied_clients
 
 
 def code2token(code):
@@ -253,3 +249,9 @@ def voteExit(intraId: str):
 
 def sign_out(response):
     response.delete_cookie('user_key')
+
+
+def exit_timeover_teams():
+    teams = Team.objects.filter(dueDate__lt=datetime.date.today().strftime("%Y-%m-%d"))
+    for team in teams:
+        team_exit(team)
